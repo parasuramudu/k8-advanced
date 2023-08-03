@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: mysqlconfig
+  name: mysql-config
 data:
   MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
   MYSQL_DATABASE: cities
@@ -35,11 +35,11 @@ spec:
       containers:
       - name: mysql
         image: parasuramkoppada/mysql:k8
-        args:
-        - "--ignore-db-dir=lost+found"
         envFrom:
         - configMapRef:
-            name: mysqlconfig
+            name: mysql-config
+        args:
+        - "--ignore-db-dir=lost+found"
         volumeMounts:
         - name: mysql
           mountPath: /var/lib/mysql
