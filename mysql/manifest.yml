@@ -35,11 +35,11 @@ spec:
       containers:
       - name: mysql
         image: parasuramkoppada/mysql:k8
+        args:
+        - "--ignore-db-dir=lost+found"
         envFrom:
         - configMapRef:
             name: mysql-config
-        args:
-        - "--ignore-db-dir=lost+found"
         volumeMounts:
         - name: mysql
           mountPath: /var/lib/mysql
@@ -51,8 +51,7 @@ spec:
       storageClassName: "ebs-sc"
       resources:
         requests:
-          storage: 2Gi
-
+          storage: 1Gi
 ---
 apiVersion: v1
 kind: Service
