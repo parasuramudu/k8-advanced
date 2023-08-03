@@ -35,6 +35,9 @@ spec:
       containers:
       - name: mysql
         image: parasuramkoppada/mysql:k8
+        envFrom:
+        - configMapRef:
+            name: mysql-config
         volumeMounts:
         - name: mysql
           mountPath: /var/lib/mysql
@@ -47,9 +50,7 @@ spec:
       resources:
         requests:
           storage: 1Gi
-        envFrom:
-        - configMapRef:
-            name: mysql-config
+
 ---
 apiVersion: v1
 kind: Service
