@@ -9,7 +9,7 @@ data:
   MYSQL_PASSWORD: secret
 ---
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: mysql
   namespace: roboshop
