@@ -1,51 +1,36 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: mysql-config
-data:
-  MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
-  MYSQL_DATABASE: cities
-  MYSQL_USER: shipping
-  MYSQL_PASSWORD: secret
----
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: mysql
+  name: rabbitmq
   namespace: roboshop
   labels:
-    app: mysql
+    app: rabbitmq
     tier: DB
     project: roboshop
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: mysql
+      app: rabbitmq
       tier: DB
       project: roboshop
   template:
     metadata:
-      name: mysql
+      name: rabbitmq
       labels:
-        app: mysql
+        app: rabbitmq
         tier: DB
         project: roboshop
     spec:
       containers:
-      - name: mysql
-        image: parasuramkoppada/mysql:k8
-        args:
-        - "--ignore-db-dir=lost+found"
-        envFrom:
-        - configMapRef:
-            name: mysql-config
+      - name: rabbitmq
+        image: rabbitmq
         volumeMounts:
-        - name: mysql
-          mountPath: /var/lib/mysql
+        - name: rabbitmq
+          mountPath: /var/lib/rabbitmq
   volumeClaimTemplates:
   - metadata:
-      name: mysql
+      name: rabbitmq
     spec:
       accessModes: ["ReadWriteOnce"]
       storageClassName: "ebs-sc"
@@ -56,23 +41,29 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: mysql
+  name: rabbitmq
   namespace: roboshop
   labels:
-    app: mysql
+    app: rabbitmq
     tier: DB
     project: roboshop
 spec:
   clusterIP: None
   selector:
     # you should provide pod labels here
-    app: mysql
+    app: rabbitmq
     tier: DB
     project: roboshop
   ports:
-  - name: mysql-port
+  - name: rabbitmq-amq
     protocol: TCP
     # service port
-    port: 3306
+    port: 5672
     # pod port
-    targetPort: 3306
+    targetPort: 5672
+  - name: rabbitmq-http
+    protocol: TCP
+    # service port
+    port: 15672
+    # pod port
+    targetPort: 15672
